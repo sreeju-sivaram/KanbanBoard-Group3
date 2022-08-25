@@ -9,15 +9,18 @@ function CustomInput(props) {
     placeholder,
     defaultValue,
     buttonText,
+    isAddTask,
   } = props;
   const [isCustomInput, setIsCustomInput] = useState(false);
   const [inputText, setInputText] = useState(defaultValue || "");
+  const [description, setDescription] = useState(defaultValue || "");
 
   const submission = (e) => {
     e.preventDefault();
     if (inputText && onSubmit) {
       setInputText("");
-      onSubmit(inputText);
+      setDescription("");
+      onSubmit({inputText, description});
     }
     setIsCustomInput(false);
   };
@@ -36,6 +39,15 @@ function CustomInput(props) {
             onChange={(event) => setInputText(event.target.value)}
             autoFocus
           />
+          {isAddTask && 
+            <input
+              type="text"
+              value={description}
+              placeholder={'Enter Task Description'}
+              onChange={(event) => setDescription(event.target.value)}
+              autoFocus
+            />
+          }
           <div className="custom-input-edit-footer">
             <button type="submit">{buttonText || "Add"}</button>
             <button type="submit" onClick={() => setIsCustomInput(false)}>{"Cancel"}</button>
