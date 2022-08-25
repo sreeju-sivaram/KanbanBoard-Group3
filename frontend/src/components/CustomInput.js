@@ -15,7 +15,7 @@ function CustomInput(props) {
   const [inputText, setInputText] = useState(defaultValue || "");
   const [description, setDescription] = useState(defaultValue || "");
 
-  const submission = (e) => {
+  const submitTask = (e) => {
     e.preventDefault();
     if (inputText && onSubmit) {
       setInputText("");
@@ -25,12 +25,21 @@ function CustomInput(props) {
     setIsCustomInput(false);
   };
 
+  const submission = (e) => {
+    e.preventDefault();
+    if (inputText && onSubmit) {
+      setInputText("");
+      onSubmit(inputText);
+    }
+    setIsCustomInput(false);
+  };
+
   return (
     <div className="custom-input">
       {isCustomInput ? (
         <form
           className={`custom-input-edit ${editClass ? editClass : ""}`}
-          onSubmit={submission}
+          onSubmit={isAddTask ? submitTask : submission}
         >
           <input
             type="text"

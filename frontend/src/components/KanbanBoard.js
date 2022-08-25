@@ -33,8 +33,8 @@ const [targetCard, setTargetCard] = useState({
 
 const addboardHandler = 
 useCallback(
-  async (name) => {
-    const response = await addNewStatus({ name: name })
+  async (inputText) => {
+    const response = await addNewStatus({ name: inputText })
     if (response.data.status === 'success') {
       setRefetchData(true)
     }
@@ -54,13 +54,13 @@ const removeBoard = (boardId) => {
 const addTaskHandler = 
 useCallback(
   async (boardId, values) => {
-    const { title, description } = values
+    const { inputText, description } = values
     const boardIndex = boards.findIndex((item) => item.id === boardId);
     if (boardIndex < 0) return;
     const newTask = {
       id: tasks.length + 1,
       project_id: 1,
-      name: title,
+      name: inputText,
       status_id: boardId,
       priority_id: 3,
       date: Date.now(),
