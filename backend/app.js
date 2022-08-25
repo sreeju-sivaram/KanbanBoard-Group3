@@ -9,6 +9,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var tasksRouter = require('./routes/tasks');
 var statusesRouter = require('./routes/statuses');
+var loginRouter = require('./routes/login');
+var registerRouter = require('./routes/register');
+var projectsRouter = require('./routes/projects');
 
 var app = express();
 
@@ -26,6 +29,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
 app.use('/statuses', statusesRouter);
+app.use('/login', loginRouter);
+app.use('/register', registerRouter);
+app.use('/projects', projectsRouter);
 
 app.use(cors({
   origin: '*'
