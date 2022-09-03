@@ -486,6 +486,12 @@ body{
     gap: 8px;
     align-items: center;
   }
+
+  .custom-input-edit-footer button:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc !important;
+    color: #666666;
+  }
   
   .custom-input-edit-footer button {
     cursor: pointer;

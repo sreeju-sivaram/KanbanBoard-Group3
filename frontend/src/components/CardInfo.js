@@ -191,9 +191,10 @@ function CardInfo(props) {
       const response = await updateCard(task.id, cardValues)
       if (response === 'success') {
         setRefetchData(true);
+        setShowModal(false);
       }
     },
-    [cardValues, task, updateCard],
+    [cardValues, task, updateCard, setShowModal],
   );
 
   const calculatedPercent = calculatePercent();
@@ -314,7 +315,7 @@ function CardInfo(props) {
             </div>
           </div>
           <div className="custom-input-edit-footer">
-            <button type="submit" onClick={handleSubmitForm}>{"Save"}</button>
+            <button type="submit" disabled={JSON.stringify(cardValues) === JSON.stringify(task)} onClick={handleSubmitForm}>{"Save"}</button>
             <button type="submit" onClick={() => setShowModal(false)}>{"Cancel"}</button>
           </div>
         </div>
