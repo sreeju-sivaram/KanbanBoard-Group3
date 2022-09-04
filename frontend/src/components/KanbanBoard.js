@@ -169,7 +169,7 @@ return (
             displayClass="app-boards-add-board"
             editClass="app-boards-add-board-edit"
             placeholder="Enter Board Name"
-            text="Add"
+            text="Add Board"
             buttonText="Add"
             onSubmit={addboardHandler}
           />
