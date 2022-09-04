@@ -169,8 +169,8 @@ return (
             displayClass="app-boards-add-board"
             editClass="app-boards-add-board-edit"
             placeholder="Enter Board Name"
-            text="Add Board"
-            buttonText="Add Board"
+            text="Add"
+            buttonText="Add"
             onSubmit={addboardHandler}
           />
           </div>
