@@ -170,7 +170,7 @@ return (
             editClass="app-boards-add-board-edit"
             placeholder="Enter Board Name"
             text="Add Board"
-            buttonText="Add Board"
+            buttonText="Add"
             onSubmit={addboardHandler}
           />
           </div>
