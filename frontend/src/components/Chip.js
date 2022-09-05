@@ -5,7 +5,7 @@ export default function Chip(props) {
   const { label, removeLabel } = props;
   const getlabelStyles = useCallback(
     (label) => {
-      if(label === 'High' || label === 'Critical Bug') {
+      if(label === 'High' || label === 'Highest') {
         return 'red'
       } else if(label === 'Medium') {
         return 'orange'
