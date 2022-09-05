@@ -10,11 +10,10 @@ function CardInfo(props) {
   const {
     onClose,
     task,
-    // boardId,
     updateCard,
     setShowModal
   } = props;
-  // const [priorityId, setPriorityId] = useState(undefined);
+
   const [cardValues, setCardValues] = useState({
     ...task,
   });
@@ -23,6 +22,7 @@ function CardInfo(props) {
   const [commentsList, setCommentsList] = useState([]);
   const [usersList, setUsersList] = useState([]);
   const [refetchData, setRefetchData] = useState(true);
+  const [escalated, setEscalated] = useState(false);
   
   const fetchPriorities = useCallback(
     async () => {
@@ -197,6 +197,20 @@ function CardInfo(props) {
     [cardValues, task, updateCard, setShowModal],
   );
 
+  const handleEscalation = useCallback( async () => {
+    delete cardValues.created_at;
+    delete cardValues.updated_at;
+    delete cardValues.priority;
+    cardValues.priority_id = 4;
+    const response = await updateCard(task.id, cardValues)
+    if (response === 'success') {
+      setRefetchData(true);
+      setEscalated(true);
+    }
+  },
+  [setRefetchData, cardValues, task, updateCard, setEscalated],
+  )
+
   const calculatedPercent = calculatePercent();
 
   return (
@@ -315,8 +329,9 @@ function CardInfo(props) {
             </div>
           </div>
           <div className="custom-input-edit-footer">
-            <button type="submit" disabled={JSON.stringify(cardValues) === JSON.stringify(task)} onClick={handleSubmitForm}>{"Save"}</button>
+            <button type="submit" disabled={JSON.stringify(cardValues) === JSON.stringify(task) || escalated} onClick={handleSubmitForm}>{"Save"}</button>
             <button type="submit" onClick={() => setShowModal(false)}>{"Cancel"}</button>
+            <button type="submit" disabled={false} onClick={() => handleEscalation()}>{"Escalate Task"}</button>
           </div>
         </div>
       </div>
