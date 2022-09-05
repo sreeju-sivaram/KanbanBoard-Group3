@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Calendar, CheckCircle, List, Tag, User, Type, MessageSquare, Trash2 } from "react-feather";
+import { Calendar, CheckCircle, List, Tag, User, Type, MessageSquare, Trash2, Edit } from "react-feather";
 import Modal from "./Modal";
 import CustomInput from "./CustomInput";
 import Chip from "./Chip";
-import { getCommentsListByTask, getPriorityList, addComment, deleteComment, getUsersByProjectId } from "../api/api";
+import { getCommentsListByTask, getPriorityList, addComment, deleteComment, getUsersByProjectId, updateComment } from "../api/api";
 import { Select, MenuItem } from "@mui/material";
 
 function CardInfo(props) {
@@ -23,6 +23,7 @@ function CardInfo(props) {
   const [usersList, setUsersList] = useState([]);
   const [refetchData, setRefetchData] = useState(true);
   const [escalated, setEscalated] = useState(false);
+  const [isCommentInput, setIsCommentInput] = useState(false)
   
   const fetchPriorities = useCallback(
     async () => {
@@ -68,66 +69,6 @@ function CardInfo(props) {
     setCardValues({ ...cardValues, description: value });
   };
 
-  // const addLabel = (label) => {
-  //   const index = cardValues.priority.findIndex(
-  //     (item) => item.text === label.text,
-  //   );
-  //   if (index > -1) return;
-
-  //   setSelectedColor("");
-  //   setCardValues({
-  //     ...cardValues,
-  //     labels: [...cardValues.labels, label],
-  //   });
-  // };
-
-  // const removeLabel = (label) => {
-  //   const tempLabels = cardValues.labels.filter(
-  //     (item) => item.text !== label.text,
-  //   );
-
-  //   setCardValues({
-  //     ...cardValues,
-  //     labels: tempLabels,
-  //   });
-  // };
-
-  // const addTask = (value) => {
-  //   const task = {
-  //     id: Date.now() + Math.random() * 2,
-  //     completed: false,
-  //     text: value,
-  //   };
-  //   setCardValues({
-  //     ...cardValues,
-  //     tasks: [...cardValues.tasks, task],
-  //   });
-  // };
-
-  // const removeTask = (id) => {
-  //   const tasks = [...cardValues.tasks];
-
-  //   const tempTasks = tasks.filter((item) => item.id !== id);
-  //   setCardValues({
-  //     ...cardValues,
-  //     tasks: tempTasks,
-  //   });
-  // };
-
-  // const updateTask = (id, value) => {
-    // const tasks = [...cardValues];
-
-    // const index = tasks.findIndex((item) => item.id === id);
-    // if (index < 0) return;
-
-    // tasks[index].completed = Boolean(value);
-
-    // setCardValues({
-    //   ...cardValues,
-    //   tasks,
-    // });
-  // };
-
   const calculatePercent = () => {
     if (!cardValues.progress_hours) return 0;
     const completed = cardValues.progress_hours
@@ -171,6 +112,21 @@ function CardInfo(props) {
       }
     },
     [task, comment, setRefetchData],
+  );
+
+  const handleUpdateComment = useCallback(
+    async (id, value) => {
+      const newComment = {
+        description: value
+      }
+      const response = await updateComment(id, newComment)
+      if (response.data === 'success') {
+        setIsCommentInput(false);
+        setRefetchData(true);
+        setComment('');
+      }
+    },
+    [setRefetchData],
   );
 
   const handleDeleteComment = useCallback(
@@ -317,10 +273,19 @@ function CardInfo(props) {
               <MessageSquare />
               <p>Comments</p>
             </div>
-            {commentsList.map((comment, index) => <li key={index}>
+            {commentsList.map((comment, index) => <li key={index} style={{'list-style-type': 'none'}}>
               <span className="comment-container">
-                {comment.username} : {comment.description}
-                  <Trash2 className="trash-icon" onClick={() => handleDeleteComment(comment.id)}/>
+                  <CustomInput
+                    defaultValue={comment.description}
+                    text={`${comment.username} : ${comment.description}`}
+                    placeholder="Enter Comment"
+                    onSubmit={(value) => {
+                      handleUpdateComment(comment.id, value);
+                    }}
+                    isCommentInput={isCommentInput}
+                  />
+                  <Edit className="comment-action-icon" onClick={() => setIsCommentInput(true)}/>
+                  <Trash2 className="comment-action-icon" onClick={() => handleDeleteComment(comment.id)}/>
                 </span>
             </li>)}
             <div className="cardinfo-box-comment">
