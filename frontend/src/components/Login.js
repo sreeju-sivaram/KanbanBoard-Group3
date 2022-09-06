@@ -29,7 +29,7 @@ const Login = () => {
             console.log(response);
             if(response.data.loggedIn){
                 setSuccess(true);
-                setAuthData({"name":response.data.name, "id":response.data.id, "email":response.data.email, "isAdmin":"", "projectId":""})
+                setAuthData({"name":response.data.name, "id":response.data.id, "email":response.data.email})
             }
             else{
                 setSuccess(false);

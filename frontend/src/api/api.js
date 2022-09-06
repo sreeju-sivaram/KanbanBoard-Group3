@@ -93,3 +93,13 @@ export const changePassword = async (params) => {
     const response = await axios.put(LOGIN_URL,params).then((response) => response.data);
     return response;
 }
+
+export const getIsAdminInd = async (id) => {
+    const response = await axios.get(`${PROJECT_USER_URL}/${id}`).then((response) => response.data);
+    return response.data;
+}
+
+export const getProjectRole = async (id,pId) =>{
+    const response = await axios.get(`${PROJECT_USER_URL}/${id}/${pId}`).then((response) => response.data);
+    return response.data;
+}

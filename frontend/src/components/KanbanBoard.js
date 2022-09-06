@@ -1,22 +1,27 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState,useContext } from "react";
 import Board from "./Board";
 import CustomInput from "./CustomInput";
-import { addNewStatus, addNewTask, getStatusData, getTasksData } from '../api/api';
+import { addNewStatus, addNewTask, getStatusData, getTasksData, getProjectRole } from '../api/api';
+import AuthContext from "../context/AuthProvider";
 
 const KanbanBoard = () => {
 const [boards, setBoards] = useState([]);
 const [tasks, setTasks] = useState([]);
+const [projectRole, setProjectRole] = useState([]);
 const [refetchData, setRefetchData] = useState(true);
+const { auth } = useContext(AuthContext);
 
 const fetchData = useCallback(
   async () => {
     const tasksResponse = await getTasksData()
     const statusResponse = await getStatusData()
+    const roleResponse = await getProjectRole(auth.data.id,auth.data.projectId);
     setTasks(tasksResponse);
     setBoards(statusResponse);
+    setProjectRole(roleResponse);
     setRefetchData(false);
   },
-  [setTasks, setBoards],
+  [setTasks, setBoards, setProjectRole],
 );
 
 useEffect(
