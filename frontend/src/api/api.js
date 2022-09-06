@@ -113,3 +113,13 @@ export const updateComment = async (id, params) => {
     const response = await axios.put(`${COMMENTS_URL}/${id}`, params).then((response) => response.data);
     return response;
 }
+
+export const getIsAdminInd = async (id) => {
+    const response = await axios.get(`${PROJECT_USER_URL}/${id}`).then((response) => response.data);
+    return response.data;
+}
+
+export const getProjectRole = async (id,pId) =>{
+    const response = await axios.get(`${PROJECT_USER_URL}/${id}/${pId}`).then((response) => response.data);
+    return response.data;
+}

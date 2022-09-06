@@ -56,15 +56,15 @@ const AssignUser = (props) => {
         <div className="custom-input">
             {assignUserInd ? (
                 <form
-                    className={`custom-input-edit`}
+                    className={`custom-input-edit assign-user`}
                     onSubmit={submission}
                 >
                     <select id="roles" onChange={(event) => setRoleSelected(event.target.value)}>
-                        <option value="">Select one</option>
+                        <option value="">Select Role</option>
                         {roles.map((role) => <option value={role.id}>{role.name}</option>)}
                     </select>
                     <select id="users" onChange={(event) => setUserSelected(event.target.value)}>
-                        <option value="">Select one</option>
+                        <option value="">Select User</option>
                         {users.map((user) => <option value={user.id}>{user.name}</option>)}
                     </select>
                     <div className="custom-input-edit-footer">
