@@ -10,7 +10,8 @@ function CustomInput(props) {
     defaultValue,
     buttonText,
     isAddTask,
-    isAddProject
+    isAddProject,
+    isCommentInput
   } = props;
   const [isCustomInput, setIsCustomInput] = useState(false);
   const [inputText, setInputText] = useState(defaultValue || "");
@@ -39,7 +40,7 @@ function CustomInput(props) {
 
   return (
     <div className="custom-input">
-      {isCustomInput ? (
+      {isCustomInput || isCommentInput ? (
         <form
           className={`custom-input-edit ${editClass ? editClass : ""}`}
           onSubmit={submission}

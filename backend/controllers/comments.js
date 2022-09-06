@@ -44,7 +44,6 @@ const addComment = async (req, res) => {
 const deleteComment = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('iddd', id)
         await db.serialize(function() {
             return db.all("DELETE from comments WHERE id=?", id, function(err, rows) {
                 if(err){
@@ -63,8 +62,34 @@ const deleteComment = async (req, res) => {
   }
 };
 
+const updateComment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.serialize(function() {
+            console.log("req",req.body)
+            return db.all("UPDATE comments SET description = ? WHERE id = ?" ,
+            [req.body.description, id], function(err, rows) {
+                if(err){
+                    res.send("Error encountered while updating the task");
+                    return console.error(err.message);
+                }
+                else {
+                    console.log(res);
+                    res.send({
+                        data: 'success',
+                    });
+                }
+            });
+        });
+    } catch (error) {
+        console.log('error', error)
+    return res.status(401).json({ error: "Could not update task" });
+  }
+};
+
 module.exports = {
     getAllComments,
     addComment,
     deleteComment,
+    updateComment,
 }

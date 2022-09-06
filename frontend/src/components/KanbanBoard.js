@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState,useContext } from "react";
 import Board from "./Board";
 import CustomInput from "./CustomInput";
-import { addNewStatus, addNewTask, getStatusData, getTasksData, getProjectRole } from '../api/api';
+import { addNewStatus, addNewTask, deleteTask, getStatusData, getTasksData, updateTaskDetails, getProjectRole} from '../api/api';
 import AuthContext from "../context/AuthProvider";
 
 const KanbanBoard = () => {
@@ -79,34 +79,25 @@ useCallback(
   [boards, tasks, setRefetchData]
 );
 
-const removeCard = (boardId, cardId) => {
-  const boardIndex = boards.findIndex((item) => item.id === boardId);
-  if (boardIndex < 0) return;
+const removeCard = useCallback( async (taskId) => {
+    const response = await deleteTask(taskId)
+    if (response.status === 'success') {
+      setRefetchData(true)
+    }
+  },
+  [setRefetchData]
+);
 
-  const tempBoardsList = [...boards];
-  const cards = tempBoardsList[boardIndex].cards;
-
-  const cardIndex = cards.findIndex((item) => item.id === cardId);
-  if (cardIndex < 0) return;
-
-  cards.splice(cardIndex, 1);
-  setBoards(tempBoardsList);
-};
-
-const updateCard = (boardId, cardId, card) => {
-  const boardIndex = boards.findIndex((item) => item.id === boardId);
-  if (boardIndex < 0) return;
-
-  const tempBoardsList = [...boards];
-  const cards = tempBoardsList[boardIndex].cards;
-
-  const cardIndex = cards.findIndex((item) => item.id === cardId);
-  if (cardIndex < 0) return;
-
-  tempBoardsList[boardIndex].cards[cardIndex] = card;
-
-  setBoards(tempBoardsList);
-};
+const updateCard = useCallback(
+  async (taskId, cardValues) => {
+    const response = await updateTaskDetails(taskId, cardValues)
+    if (response === 'success') {
+      setRefetchData(true);
+      return response
+    }
+  },
+  [setRefetchData],
+);
 
 const onDragEnd = (boardId, cardId) => {
   const sourceBoardIndex = boards.findIndex(
@@ -179,7 +170,7 @@ return (
             editClass="app-boards-add-board-edit"
             placeholder="Enter Board Name"
             text="Add Board"
-            buttonText="Add Board"
+            buttonText="Add"
             onSubmit={addboardHandler}
           />
           </div>

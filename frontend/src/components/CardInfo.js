@@ -1,27 +1,29 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Calendar, CheckCircle, List, Tag, User, Type, MessageSquare, Trash2 } from "react-feather";
+import { Calendar, CheckCircle, List, Tag, User, Type, MessageSquare, Trash2, Edit } from "react-feather";
 import Modal from "./Modal";
 import CustomInput from "./CustomInput";
 import Chip from "./Chip";
-import { getCommentsListByTask, getPriorityList, addComment, deleteComment } from "../api/api";
+import { getCommentsListByTask, getPriorityList, addComment, deleteComment, getUsersByProjectId, updateComment } from "../api/api";
 import { Select, MenuItem } from "@mui/material";
 
 function CardInfo(props) {
   const {
     onClose,
     task,
-    // boardId,
-    // updateCard,
+    updateCard,
     setShowModal
   } = props;
-  // const [priorityId, setPriorityId] = useState(undefined);
+
   const [cardValues, setCardValues] = useState({
     ...task,
   });
   const [comment, setComment] = useState('');
   const [priorityList, setPriorityList] = useState([]);
   const [commentsList, setCommentsList] = useState([]);
+  const [usersList, setUsersList] = useState([]);
   const [refetchData, setRefetchData] = useState(true);
+  const [escalated, setEscalated] = useState(false);
+  const [isCommentInput, setIsCommentInput] = useState(false)
   
   const fetchPriorities = useCallback(
     async () => {
@@ -39,15 +41,24 @@ function CardInfo(props) {
     [setCommentsList, task],
   );
 
+  const fetchUsers = useCallback(
+    async () => {
+      const response = await getUsersByProjectId(1)
+      setUsersList(response);
+    },
+    [setUsersList],
+  );
+
   useEffect(
     () => {
       if(refetchData) {
         fetchPriorities();
         fetchComments();
+        fetchUsers();
         setRefetchData(false);
       }
     },
-    [fetchPriorities, fetchComments, refetchData, setRefetchData]
+    [fetchPriorities, fetchComments, refetchData, setRefetchData, fetchUsers]
   );
 
   const updateTitle = (value) => {
@@ -58,78 +69,32 @@ function CardInfo(props) {
     setCardValues({ ...cardValues, description: value });
   };
 
-  // const addLabel = (label) => {
-  //   const index = cardValues.priority.findIndex(
-  //     (item) => item.text === label.text,
-  //   );
-  //   if (index > -1) return;
-
-  //   setSelectedColor("");
-  //   setCardValues({
-  //     ...cardValues,
-  //     labels: [...cardValues.labels, label],
-  //   });
-  // };
-
-  // const removeLabel = (label) => {
-  //   const tempLabels = cardValues.labels.filter(
-  //     (item) => item.text !== label.text,
-  //   );
-
-  //   setCardValues({
-  //     ...cardValues,
-  //     labels: tempLabels,
-  //   });
-  // };
-
-  // const addTask = (value) => {
-  //   const task = {
-  //     id: Date.now() + Math.random() * 2,
-  //     completed: false,
-  //     text: value,
-  //   };
-  //   setCardValues({
-  //     ...cardValues,
-  //     tasks: [...cardValues.tasks, task],
-  //   });
-  // };
-
-  // const removeTask = (id) => {
-  //   const tasks = [...cardValues.tasks];
-
-  //   const tempTasks = tasks.filter((item) => item.id !== id);
-  //   setCardValues({
-  //     ...cardValues,
-  //     tasks: tempTasks,
-  //   });
-  // };
-
-  // const updateTask = (id, value) => {
-    // const tasks = [...cardValues];
-
-    // const index = tasks.findIndex((item) => item.id === id);
-    // if (index < 0) return;
-
-    // tasks[index].completed = Boolean(value);
-
-    // setCardValues({
-    //   ...cardValues,
-    //   tasks,
-    // });
-  // };
-
   const calculatePercent = () => {
-    if (!cardValues.remainingHours) return 0;
-    const completed = cardValues
-    return (completed / cardValues.tasks?.length) * 100;
+    if (!cardValues.progress_hours) return 0;
+    const completed = cardValues.progress_hours
+    return (completed / cardValues.estimate_hours) * 100;
   };
 
   const updateDate = (date) => {
     if (!date) return;
-
     setCardValues({
       ...cardValues,
       date,
+    });
+  };
+
+  const handleAssigneeChange = (e) => {
+    setCardValues({
+      ...cardValues,
+      assignee_id: e.target.value,
+    });
+  };
+
+  const handlePriorityChange = (e) => {
+    setCardValues({
+      ...cardValues,
+      priority_id: e.target.value,
+      priority: priorityList.find(item => item.id === e.target.value).name
     });
   };
 
@@ -149,6 +114,21 @@ function CardInfo(props) {
     [task, comment, setRefetchData],
   );
 
+  const handleUpdateComment = useCallback(
+    async (id, value) => {
+      const newComment = {
+        description: value
+      }
+      const response = await updateComment(id, newComment)
+      if (response.data === 'success') {
+        setIsCommentInput(false);
+        setRefetchData(true);
+        setComment('');
+      }
+    },
+    [setRefetchData],
+  );
+
   const handleDeleteComment = useCallback(
     async (id) => {
       const response = await deleteComment(id)
@@ -158,6 +138,34 @@ function CardInfo(props) {
     },
     [setRefetchData],
   );
+
+  const handleSubmitForm = useCallback(
+    async () => {
+      delete cardValues.created_at;
+      delete cardValues.updated_at;
+      delete cardValues.priority;
+      const response = await updateCard(task.id, cardValues)
+      if (response === 'success') {
+        setRefetchData(true);
+        setShowModal(false);
+      }
+    },
+    [cardValues, task, updateCard, setShowModal],
+  );
+
+  const handleEscalation = useCallback( async () => {
+    delete cardValues.created_at;
+    delete cardValues.updated_at;
+    delete cardValues.priority;
+    cardValues.priority_id = 4;
+    const response = await updateCard(task.id, cardValues)
+    if (response === 'success') {
+      setRefetchData(true);
+      setEscalated(true);
+    }
+  },
+  [setRefetchData, cardValues, task, updateCard, setEscalated],
+  )
 
   const calculatedPercent = calculatePercent();
 
@@ -210,12 +218,12 @@ function CardInfo(props) {
           <div className="cardinfo-box-select">
             <Select
               label="Assignee"
-              value={''}
-              // onChange={handleChange}
+              value={cardValues.assignee_id}
+              onChange={handleAssigneeChange}
               style={{height: '40px'}}
             >
               {
-                [].map((user, index) =>
+                usersList.map((user, index) =>
                 <MenuItem key={index} value={user.id}>{user.name}</MenuItem>
               )}
             </Select>
@@ -228,20 +236,20 @@ function CardInfo(props) {
           </div>
           <div className="cardinfo-box-labels">
             <Chip 
-              label={cardValues.priority}
+              label={priorityList.find(item => item.id === cardValues.priority_id)?.name}
             //  removeLabel={(removeLabel)}
              />
           </div>
           <div className="cardinfo-box-select">
             <Select
               label="Priority"
-              value={cardValues.priority}
-              // onChange={handleChange}
+              value={cardValues.priority_id}
+              onChange={handlePriorityChange}
               style={{height: '40px'}}
             >
               {
                 priorityList.map((priority, index) =>
-                <MenuItem key={index} value={priority.name}>{priority.name}</MenuItem>
+                <MenuItem key={index} value={priority.id}>{priority.name}</MenuItem>
               )}
             </Select>
           </div>
@@ -265,10 +273,19 @@ function CardInfo(props) {
               <MessageSquare />
               <p>Comments</p>
             </div>
-            {commentsList.map((comment, index) => <li key={index}>
+            {commentsList.map((comment, index) => <li key={index} style={{'list-style-type': 'none'}}>
               <span className="comment-container">
-                {comment.username} : {comment.description}
-                  <Trash2 className="trash-icon" onClick={() => handleDeleteComment(comment.id)}/>
+                  <CustomInput
+                    defaultValue={comment.description}
+                    text={`${comment.username} : ${comment.description}`}
+                    placeholder="Enter Comment"
+                    onSubmit={(value) => {
+                      handleUpdateComment(comment.id, value);
+                    }}
+                    isCommentInput={isCommentInput}
+                  />
+                  <Edit className="comment-action-icon" onClick={() => setIsCommentInput(true)}/>
+                  <Trash2 className="comment-action-icon" onClick={() => handleDeleteComment(comment.id)}/>
                 </span>
             </li>)}
             <div className="cardinfo-box-comment">
@@ -277,8 +294,9 @@ function CardInfo(props) {
             </div>
           </div>
           <div className="custom-input-edit-footer">
-            <button type="submit">{"Save"}</button>
+            <button type="submit" disabled={JSON.stringify(cardValues) === JSON.stringify(task) || escalated} onClick={handleSubmitForm}>{"Save"}</button>
             <button type="submit" onClick={() => setShowModal(false)}>{"Cancel"}</button>
+            <button type="submit" disabled={false} onClick={() => handleEscalation()}>{"Escalate Task"}</button>
           </div>
         </div>
       </div>
