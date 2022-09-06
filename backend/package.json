@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "SET DEBUG=myapp:* & nodemon ./bin/www"
+    "start": "SET DEBUG=myapp:* & nodemon ./bin/www",
+    "test": "jest --silent",
+    "test:watch": "npm run test -- --watch"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -11,7 +13,9 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "jest": "^29.0.2",
     "morgan": "~1.9.1",
+    "node-mocks-http": "^1.11.0",
     "pug": "2.0.0-beta11",
     "sqlite3": "^5.0.11"
   },
