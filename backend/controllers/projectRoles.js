@@ -2,7 +2,6 @@ const db = require("../database");
 
 const assignUser = async (req, res) => {
     try {
-        console.log("in assignUser")
         const { roleId,userId,projectId} = req.body;
         const id = String(roleId) + String(userId) + String(projectId);
         await db.serialize(function() {
@@ -27,18 +26,19 @@ const assignUser = async (req, res) => {
 const getIsAdminInd = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("in getIsAdminInd", id);
         await db.serialize(function() {
-            return db.run("SELECT INTO project_roles (user_id) VALUES (?)", 
-            [id],  function(err) {
-                //iterate through and find if the user is an admin on any project 
+            return db.all("SELECT p.*, r.name AS role FROM project_roles AS p JOIN roles AS r ON p.role_id = r.id WHERE p.user_id = ?",id, function(err, rows) { 
                 if(err){
-                    res.send("Error encountered while checking is user is admin");
+                    res.send("Error encountered while checking if user is admin");
                     return console.error(err.message);
                 }
                 else {
+                    let isAdmin = false;
+                    rows && rows.map((item) => {
+                        if(item.role_id === 1) {
+                        isAdmin = true}});
                     res.send({
-                        status: 'success'
+                        data: isAdmin,
                     });
                 }
             });
@@ -51,17 +51,16 @@ const getIsAdminInd = async (req, res) => {
 const getUsersProjectRole = async (req, res) => {
     try {
         const { id,pId } = req.params;
-        console.log("in getUsersProjectRole", id, pId, req.params);
         await db.serialize(function() {
-            return db.run("SELECT INTO project_roles (user_id) VALUES (?)", 
-            [id],  function(err) {
+            return db.all("SELECT * FROM project_roles WHERE user_id = ? AND project_id = ?", 
+            [id,pId],  function(err,rows) {
                 if(err){
                     res.send("Error encountered while finding role");
                     return console.error(err.message);
                 }
                 else {
                     res.send({
-                        status: 'success'
+                        data: rows ? rows[0].role_id : 0,
                     });
                 }
             });
