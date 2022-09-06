@@ -4,7 +4,7 @@ const { getAllTasks, addNewTask, deleteTask, updateTask } = require('../controll
 var router = express.Router();
 
 /* Fetch all tasks from database */
-router.get('/', getAllTasks);
+router.get('/:id', getAllTasks);
 router.post('/', addNewTask);
 router.delete('/:id', deleteTask);
 router.put('/:id', updateTask);

@@ -6,7 +6,7 @@ import Dropdown from "./Dropdown";
 import CardInfo from "./CardInfo";
 
 function Card(props) {
-  const { task, boardId, removeCard, onDragEnd, onDragEnter, updateCard } =
+  const { task, boardId, removeCard, onDragEnd, onDragEnter, updateCard, projectRole } =
     props;
   const { id, name, description, date, tasks, priority } = task;
   const [showDropdown, setShowDropdown] = useState(false);
@@ -21,6 +21,7 @@ function Card(props) {
           boardId={boardId}
           updateCard={updateCard}
           setShowModal={setShowModal}
+          projectRole={projectRole}
         />
       )}
       <div

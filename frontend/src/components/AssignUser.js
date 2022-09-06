@@ -40,7 +40,7 @@ const AssignUser = (props) => {
                     setRefetchData(true)
                 }
             },
-            [setRefetchData]
+            [setRefetchData, projectId]
         );
         const submission = (e) => {
             e.preventDefault();

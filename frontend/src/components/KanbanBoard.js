@@ -13,7 +13,7 @@ const { auth } = useContext(AuthContext);
 
 const fetchData = useCallback(
   async () => {
-    const tasksResponse = await getTasksData()
+    const tasksResponse = await getTasksData(auth.data.projectId)
     const statusResponse = await getStatusData()
     const roleResponse = await getProjectRole(auth.data.id,auth.data.projectId);
     setTasks(tasksResponse);
@@ -21,7 +21,7 @@ const fetchData = useCallback(
     setProjectRole(roleResponse);
     setRefetchData(false);
   },
-  [setTasks, setBoards, setProjectRole],
+  [setTasks, setBoards, setProjectRole, auth],
 );
 
 useEffect(
@@ -64,7 +64,7 @@ useCallback(
     if (boardIndex < 0) return;
     const newTask = {
       id: tasks.length + 1,
-      project_id: 1,
+      project_id: auth.data.projectId,
       name: inputText,
       status_id: boardId,
       priority_id: 3,
@@ -76,7 +76,7 @@ useCallback(
       setRefetchData(true)
     }
   },
-  [boards, tasks, setRefetchData]
+  [boards, tasks, setRefetchData, auth]
 );
 
 const removeCard = useCallback( async (taskId) => {
@@ -162,6 +162,7 @@ return (
             onDragEnter={onDragEnter}
             updateCard={updateCard}
             tasks={tasks}
+            projectRole={projectRole}
           />
           ))}
           <div className="app-boards-last">

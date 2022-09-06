@@ -123,11 +123,7 @@ body{
     gap: 5px;
     align-items: center;
   }
-  
-  .board-header-title span {
-    color: rgb(145, 145, 145);
-  }
-  
+
   .board-header-title-more {
     cursor: pointer;
     position: relative;

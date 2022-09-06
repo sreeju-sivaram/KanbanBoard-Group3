@@ -1,17 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Calendar, CheckCircle, List, Tag, User, Type, MessageSquare, Trash2, Edit } from "react-feather";
 import Modal from "./Modal";
 import CustomInput from "./CustomInput";
 import Chip from "./Chip";
 import { getCommentsListByTask, getPriorityList, addComment, deleteComment, getUsersByProjectId, updateComment } from "../api/api";
 import { Select, MenuItem } from "@mui/material";
+import AuthContext from "../context/AuthProvider";
 
 function CardInfo(props) {
   const {
     onClose,
     task,
     updateCard,
-    setShowModal
+    setShowModal,
+    projectRole,
   } = props;
 
   const [cardValues, setCardValues] = useState({
@@ -23,7 +25,8 @@ function CardInfo(props) {
   const [usersList, setUsersList] = useState([]);
   const [refetchData, setRefetchData] = useState(true);
   const [escalated, setEscalated] = useState(false);
-  const [isCommentInput, setIsCommentInput] = useState(false)
+  const [isCommentInput, setIsCommentInput] = useState(false);
+  const { auth } = useContext(AuthContext);
   
   const fetchPriorities = useCallback(
     async () => {
@@ -102,7 +105,7 @@ function CardInfo(props) {
     async () => {
       const newComment = {
         task_id: task.id,
-        user_id: 3,
+        user_id: auth.data.id,
         description: comment
       }
       const response = await addComment(newComment)
@@ -111,7 +114,7 @@ function CardInfo(props) {
         setComment('');
       }
     },
-    [task, comment, setRefetchData],
+    [task, comment, setRefetchData, auth],
   );
 
   const handleUpdateComment = useCallback(
@@ -237,7 +240,6 @@ function CardInfo(props) {
           <div className="cardinfo-box-labels">
             <Chip 
               label={priorityList.find(item => item.id === cardValues.priority_id)?.name}
-            //  removeLabel={(removeLabel)}
              />
           </div>
           <div className="cardinfo-box-select">
@@ -284,8 +286,11 @@ function CardInfo(props) {
                     }}
                     isCommentInput={isCommentInput}
                   />
-                  <Edit className="comment-action-icon" onClick={() => setIsCommentInput(true)}/>
-                  <Trash2 className="comment-action-icon" onClick={() => handleDeleteComment(comment.id)}/>
+                  { projectRole !== 2 && <>
+                    <Edit className="comment-action-icon" onClick={() => setIsCommentInput(true)}/>
+                    <Trash2 className="comment-action-icon" onClick={() => handleDeleteComment(comment.id)}/>
+                    </>
+                  }
                 </span>
             </li>)}
             <div className="cardinfo-box-comment">

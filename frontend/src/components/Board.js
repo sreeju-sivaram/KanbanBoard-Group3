@@ -11,6 +11,7 @@ const Board = (props) => {
     onDragEnter,
     updateCard,
     tasks,
+    projectRole,
   } = props;
   const tasksForBoard = tasks.filter((task) => task.status_id === board.id)
   return (
@@ -32,16 +33,19 @@ const Board = (props) => {
               onDragEnter={onDragEnter}
               onDragEnd={onDragEnd}
               updateCard={updateCard}
+              projectRole={projectRole}
             />
           })}
-          <CustomInput
-            text="+ Add Task"
-            placeholder="Enter Task Title"
-            displayClass="board-add-card"
-            editClass="board-add-card-edit"
-            onSubmit={(value) => addTask(board?.id, value)}
-            isAddTask={true}
-          />
+          { projectRole !== 2 && 
+            <CustomInput
+              text="+ Add Task"
+              placeholder="Enter Task Title"
+              displayClass="board-add-card"
+              editClass="board-add-card-edit"
+              onSubmit={(value) => addTask(board?.id, value)}
+              isAddTask={true}
+            />
+          }
         </div>
       </div>
     </div>

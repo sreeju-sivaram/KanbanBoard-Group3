@@ -2,8 +2,9 @@ const db = require("../database");
 
 const getAllTasks = async (req, res) => {
     try {
+        const { id } = req.params;
         await db.serialize(function() {
-            return db.all("SELECT t.*, p.name AS priority FROM tasks AS t JOIN priorities AS p ON t.priority_id = p.id", function(err, rows) {
+            return db.all("SELECT t.*, p.name AS priority FROM tasks AS t JOIN priorities AS p ON t.priority_id = p.id WHERE t.project_id = ?", id, function(err, rows) {
                 if(err){
                     res.send("Error encountered while fetching");
                     return console.error(err.message);
