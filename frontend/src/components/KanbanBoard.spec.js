@@ -19,6 +19,6 @@ describe("KanbanBoard", () => {
         const wrapper = shallow(<KanbanBoard />);
         const customInput = wrapper.find(CustomInput);
         expect(customInput.prop('placeholder')).toEqual('Enter Board Name');
-        expect(customInput.prop('buttonText')).toEqual('Add Board');
+        expect(customInput.prop('buttonText')).toEqual('Add');
     });
 });
