@@ -36,7 +36,6 @@ const Board = (props) => {
               projectRole={projectRole}
             />
           })}
-          { projectRole !== 2 && 
             <CustomInput
               text="+ Add Task"
               placeholder="Enter Task Title"
@@ -44,8 +43,8 @@ const Board = (props) => {
               editClass="board-add-card-edit"
               onSubmit={(value) => addTask(board?.id, value)}
               isAddTask={true}
+              disabled={projectRole !== 4 || projectRole !== 1}
             />
-          }
         </div>
       </div>
     </div>

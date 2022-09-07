@@ -98,43 +98,42 @@ const updateCard = useCallback(
   },
   [setRefetchData],
 );
+ 
+const onDragEnd = useCallback(
+  async (boardId, cardId) => {
+    const sourceBoardIndex = boards.findIndex(
+      (item) => item.id === boardId,
+    );
+    if (sourceBoardIndex < 0) return;
 
-const onDragEnd = (boardId, cardId) => {
-  const sourceBoardIndex = boards.findIndex(
-    (item) => item.id === boardId,
-  );
-  if (sourceBoardIndex < 0) return;
+    const sourceCardIndex = tasks.findIndex(
+      (item) => item.id === cardId,
+    );
+    if (sourceCardIndex < 0) return;
 
-  const sourceCardIndex = boards[sourceBoardIndex]?.cards?.findIndex(
-    (item) => item.id === cardId,
-  );
-  if (sourceCardIndex < 0) return;
+    const targetBoardIndex = boards.findIndex(
+      (item) => item.id === targetCard.boardId,
+    );
+    if (targetBoardIndex < 0) return;
 
-  const targetBoardIndex = boards.findIndex(
-    (item) => item.id === targetCard.boardId,
-  );
-  if (targetBoardIndex < 0) return;
+    const targetCardIndex = tasks.findIndex(
+      (item) => item.id === targetCard.cardId,
+    );
+    if (targetCardIndex < 0) return;
 
-  const targetCardIndex = boards[targetBoardIndex]?.cards?.findIndex(
-    (item) => item.id === targetCard.cardId,
-  );
-  if (targetCardIndex < 0) return;
+    const updatedTask = {
+      ...tasks[sourceCardIndex],
+      status_id: boards[targetBoardIndex].id,
+    }
 
-  const tempBoardsList = [...boards];
-  const sourceCard = tempBoardsList[sourceBoardIndex].cards[sourceCardIndex];
-  tempBoardsList[sourceBoardIndex].cards.splice(sourceCardIndex, 1);
-  tempBoardsList[targetBoardIndex].cards.splice(
-    targetCardIndex,
-    0,
-    sourceCard,
-  );
-  setBoards(tempBoardsList);
-
-  setTargetCard({
-    boardId: 0,
-    cardId: 0,
-  });
-};
+    const response = await updateTaskDetails(tasks[sourceCardIndex].id, updatedTask)
+    if (response === 'success') {
+      setRefetchData(true);
+      return response
+    }
+},
+  [setRefetchData, boards, targetCard, tasks],
+);
 
 const onDragEnter = (boardId, cardId) => {
   if (targetCard.cardId === cardId) return;

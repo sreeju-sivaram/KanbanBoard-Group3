@@ -115,6 +115,12 @@ body{
     align-items: center;
     padding-bottom: 5px;
   }
+
+  .custom-input-display:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc !important;
+    color: #666666;
+  }
   
   .board-header-title {
     font-weight: bold;

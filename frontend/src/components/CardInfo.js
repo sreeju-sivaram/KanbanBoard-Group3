@@ -224,6 +224,7 @@ function CardInfo(props) {
               value={cardValues.assignee_id}
               onChange={handleAssigneeChange}
               style={{height: '40px'}}
+              disabled={projectRole !== 4 || projectRole !== 1}
             >
               {
                 usersList.map((user, index) =>

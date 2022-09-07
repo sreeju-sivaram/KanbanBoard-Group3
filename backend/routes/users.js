@@ -5,6 +5,6 @@ var router = express.Router();
 
 /* GET user by id */
 router.get('/:id', getUsersByProjectId);
-router.get('/list', getAllUsers);
+router.get('/', getAllUsers);
 
 module.exports = router;
