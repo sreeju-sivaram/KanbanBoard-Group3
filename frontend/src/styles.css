@@ -115,6 +115,12 @@ body{
     align-items: center;
     padding-bottom: 5px;
   }
+
+  .custom-input-display:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc !important;
+    color: #666666;
+  }
   
   .board-header-title {
     font-weight: bold;
@@ -123,11 +129,7 @@ body{
     gap: 5px;
     align-items: center;
   }
-  
-  .board-header-title span {
-    color: rgb(145, 145, 145);
-  }
-  
+
   .board-header-title-more {
     cursor: pointer;
     position: relative;

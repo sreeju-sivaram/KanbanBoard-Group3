@@ -6,14 +6,13 @@ const LOGIN_URL = '/login';
 const REGISTER_URL = '/register';
 const PROJECTS_URL = '/projects';
 const PRIORITY_URL = '/priorities';
-const USERS_LIST_URL = '/users/list';
 const ROLES_URL = '/roles';
 const PROJECT_USER_URL = '/projectroles'
 const COMMENTS_URL = '/comments';
 const USERS_URL = '/users';
 
-export const getTasksData = async () => {
-    const response = await axios.get(TASKS_URL).then((response) => response.data);
+export const getTasksData = async (projectId) => {
+    const response = await axios.get(`${TASKS_URL}/${projectId}`).then((response) => response.data);
     return response.data;
 }
 
@@ -65,7 +64,7 @@ export const getRolesList = async () => {
 }
 
 export const getUsersList = async () => {
-    const response = await axios.get(USERS_LIST_URL).then((response) => response.data);
+    const response = await axios.get(USERS_URL).then((response) => response.data);
     return response.data;
 }
 

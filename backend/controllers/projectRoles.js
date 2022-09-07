@@ -60,7 +60,7 @@ const getUsersProjectRole = async (req, res) => {
                 }
                 else {
                     res.send({
-                        data: rows ? rows[0].role_id : 0,
+                        data: rows ? rows[0]?.role_id : 0,
                     });
                 }
             });

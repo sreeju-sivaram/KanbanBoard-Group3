@@ -21,7 +21,7 @@ const Project = () => {
             setIsAdmin(isAdminResponse);
             setRefetchData(false);
         },
-        [setProjects, setIsAdmin],
+        [setProjects, setIsAdmin, auth],
     );
 
     useEffect(

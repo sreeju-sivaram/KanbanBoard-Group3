@@ -11,7 +11,8 @@ function CustomInput(props) {
     buttonText,
     isAddTask,
     isAddProject,
-    isCommentInput
+    isCommentInput,
+    disabled,
   } = props;
   const [isCustomInput, setIsCustomInput] = useState(false);
   const [inputText, setInputText] = useState(defaultValue || "");
@@ -84,12 +85,19 @@ function CustomInput(props) {
           </div>
         </form>
       ) : (
-        <p
+        isAddTask ? <button
           className={`custom-input-display ${displayClass ? displayClass : ""}`}
           onClick={() => setIsCustomInput(true)}
+          disabled={disabled}
         >
           {text}
-        </p>
+        </button> :
+        <p
+        className={`custom-input-display ${displayClass ? displayClass : ""}`}
+        onClick={() => setIsCustomInput(true)}
+      >
+        {text}
+      </p>
       )}
     </div>
   );
