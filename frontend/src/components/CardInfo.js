@@ -4,7 +4,7 @@ import Modal from "./Modal";
 import CustomInput from "./CustomInput";
 import Chip from "./Chip";
 import { getCommentsListByTask, getPriorityList, addComment, deleteComment, getUsersByProjectId, updateComment } from "../api/api";
-import { Select, MenuItem } from "@mui/material";
+import { Select, MenuItem, TextField, InputAdornment } from "@mui/material";
 import AuthContext from "../context/AuthProvider";
 
 function CardInfo(props) {
@@ -101,6 +101,21 @@ function CardInfo(props) {
     });
   };
 
+  const handleHoursChange = (e) => {
+    var hours = {};
+
+    hours[e.target.id] = Number(e.target.value);
+    if(e.target.id === 'estimate_hours') {
+      hours['remaining_hours'] = Number(e.target.value) - Number(cardValues.progress_hours)
+    } else if (e.target.id === 'progress_hours') {
+      hours['remaining_hours'] = Number(cardValues.estimate_hours) - Number(e.target.value)
+    }
+    setCardValues({
+      ...cardValues,
+      ...hours,
+    });
+  };
+
   const handleAddComment = useCallback(
     async () => {
       const newComment = {
@@ -185,6 +200,7 @@ function CardInfo(props) {
             text={cardValues.name}
             placeholder="Enter Title"
             onSubmit={updateTitle}
+            disabled={projectRole === 2 || projectRole === 3}
           />
         </div>
 
@@ -198,6 +214,7 @@ function CardInfo(props) {
             text={cardValues.description || "Add a Description"}
             placeholder="Enter description"
             onSubmit={updateDesc}
+            disabled={projectRole === 2 || projectRole === 3}
           />
         </div>
 
@@ -211,6 +228,7 @@ function CardInfo(props) {
             defaultValue={new Date(cardValues.date).toISOString().substring(0, 10)}
             min={new Date().toISOString().substring(0, 10)}
             onChange={(event) => updateDate(event.target.value)}
+            disabled={projectRole === 2 || projectRole === 3}
           />
         </div>
         <div className="cardinfo-box">
@@ -224,7 +242,7 @@ function CardInfo(props) {
               value={cardValues.assignee_id}
               onChange={handleAssigneeChange}
               style={{height: '40px'}}
-              disabled={projectRole !== 4 || projectRole !== 1}
+              disabled={projectRole === 2 || projectRole === 3}
             >
               {
                 usersList.map((user, index) =>
@@ -249,6 +267,7 @@ function CardInfo(props) {
               value={cardValues.priority_id}
               onChange={handlePriorityChange}
               style={{height: '40px'}}
+              disabled={projectRole === 2 || projectRole === 3}
             >
               {
                 priorityList.map((priority, index) =>
@@ -256,6 +275,71 @@ function CardInfo(props) {
               )}
             </Select>
           </div>
+        </div>
+        <div className="cardinfo-hours-box">
+          <>
+            <div className="cardinfo-box-title">
+              <p>Estimate Hours</p>
+            </div>
+            <div className="cardinfo-box-number">
+              <TextField
+                id="estimate_hours"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={cardValues.estimate_hours}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
+                  style: { maxHeight: '40px', width: '80%' }
+                }}
+                onChange={handleHoursChange}
+                disabled={projectRole === 2}
+              />
+            </div>
+          </>
+          <>
+            <div className="cardinfo-box-title">
+              <p>Progress Hours</p>
+            </div>
+            <div className="cardinfo-box-number">
+              <TextField
+                id="progress_hours"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={cardValues.progress_hours}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
+                  style: { maxHeight: '40px', width: '80%' }
+                }}
+                onChange={handleHoursChange}
+                disabled={projectRole === 2}
+              />
+            </div>
+          </>
+          <>
+            <div className="cardinfo-box-title">
+              <p>Remaining Hours</p>
+            </div>
+            <div className="cardinfo-box-number">
+              <TextField
+                id="remaining_hours"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={cardValues.remaining_hours}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
+                  style: { maxHeight: '40px', width: '80%' }
+                }}
+                onChange={handleHoursChange}
+                disabled={projectRole === 2}
+              />
+            </div>
+          </>
         </div>
         <div className="cardinfo-box">
           <div className="cardinfo-box-title">
@@ -296,7 +380,7 @@ function CardInfo(props) {
             </li>)}
             <div className="cardinfo-box-comment">
               <textarea className="cardinfo-box-comment-box" value={comment} onChange={(e)=>setComment(e.target.value)} />
-              <button className="add-comment-button" type="submit" onClick={handleAddComment}>{"Add comment"}</button>
+              <button className="add-comment-button" type="submit" onClick={handleAddComment} disabled={projectRole === 2}>{"Add comment"}</button>
             </div>
           </div>
           <div className="custom-input-edit-footer">

@@ -94,7 +94,7 @@ function CustomInput(props) {
         </button> :
         <p
         className={`custom-input-display ${displayClass ? displayClass : ""}`}
-        onClick={() => setIsCustomInput(true)}
+        onClick={() => !disabled && setIsCustomInput(true)}
       >
         {text}
       </p>

@@ -101,6 +101,7 @@ const updateCard = useCallback(
  
 const onDragEnd = useCallback(
   async (boardId, cardId) => {
+    if(projectRole === 2) return;
     const sourceBoardIndex = boards.findIndex(
       (item) => item.id === boardId,
     );
@@ -132,10 +133,11 @@ const onDragEnd = useCallback(
       return response
     }
 },
-  [setRefetchData, boards, targetCard, tasks],
+  [setRefetchData, boards, targetCard, tasks, projectRole],
 );
 
 const onDragEnter = (boardId, cardId) => {
+  if(projectRole === 2) return;
   if (targetCard.cardId === cardId) return;
   setTargetCard({
     boardId: boardId,
