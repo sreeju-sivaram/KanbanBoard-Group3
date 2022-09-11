@@ -43,7 +43,7 @@ const Board = (props) => {
               editClass="board-add-card-edit"
               onSubmit={(value) => addTask(board?.id, value)}
               isAddTask={true}
-              disabled={projectRole !== 4 || projectRole !== 1}
+              disabled={(projectRole === 2 || projectRole === 3)}
             />
         </div>
       </div>

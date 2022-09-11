@@ -68,19 +68,21 @@ const updateTask = async (req, res) => {
         const { id } = req.params;
         await db.serialize(function() {
             console.log("req",req.body)
-            return db.all("UPDATE tasks SET name = ?, assignee_id = ?, status_id = ?, date = ?, description = ?, project_id = ?, priority_id = ?  WHERE tasks.id = ?" ,
-            [req.body.name, req.body.assignee_id, req.body.status_id, req.body.date, req.body.description, req.body.project_id, req.body.priority_id, id], function(err, rows) {
-                if(err){
-                    res.send("Error encountered while updating the task");
-                    return console.error(err.message);
-                }
-                else {
-                    console.log(res);
-                    res.send({
-                        data: 'success',
-                    });
-                }
-            });
+            return db.all(
+                "UPDATE tasks SET name = ?, assignee_id = ?, status_id = ?, date = ?, description = ?, project_id = ?, priority_id = ?, estimate_hours = ?, progress_hours = ?, remaining_hours = ? WHERE tasks.id = ?" ,
+                [req.body.name, req.body.assignee_id, req.body.status_id, req.body.date, req.body.description, req.body.project_id, req.body.priority_id, req.body.estimate_hours, req.body.progress_hours, req.body.remaining_hours, id],
+                function(err, rows) {
+                    if(err){
+                        res.send("Error encountered while updating the task");
+                        return console.error(err.message);
+                    }
+                    else {
+                        console.log(res);
+                        res.send({
+                            data: 'success',
+                        });
+                    }
+                });
         });
     } catch (error) {
         console.log('error', error)
