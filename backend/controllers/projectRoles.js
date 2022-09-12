@@ -76,7 +76,7 @@ const deleteUserFrmProject = async (req, res) => {
     try {
         const { id } = req.params;
         await db.serialize(function() {
-            return db.all("DELETE from project_roles WHERE id=?", id, function(err) {
+            return db.all("DELETE from project_roles WHERE user_id=?", id, function(err) {
                 if(err){
                     res.send("Error encountered while deleting");
                     return console.error(err.message);

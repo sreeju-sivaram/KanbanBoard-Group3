@@ -62,7 +62,7 @@ const AssignUser = (props) => {
         useCallback(
             async (id) => {
                 const response = await deleteUserFrmProject(id)
-                if (response.data.status === 'success') {
+                if (response.status === 'success') {
                     setRefetchData(true)
                 }
             },
