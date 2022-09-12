@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { getProjectsList, addProject, getIsAdminInd } from '../api/api';
+import { getProjectsList, addProject } from '../api/api';
 import CustomInput from "./CustomInput";
 import AssignUser from "./AssignUser";
 import ChangePassword from "./ChangePassword";
@@ -15,10 +15,9 @@ const Project = () => {
 
     const fetchData = useCallback(
         async () => {
-            const projectListResponse = await getProjectsList()
-            setProjects(projectListResponse);
-            const isAdminResponse = await getIsAdminInd(auth.data.id);
-            setIsAdmin(isAdminResponse);
+            const projectListResponse = await getProjectsList(auth.data.id);
+            setProjects(projectListResponse.rows);
+            setIsAdmin(projectListResponse.isAdmin);
             setRefetchData(false);
         },
         [setProjects, setIsAdmin, auth],
@@ -34,9 +33,9 @@ const Project = () => {
     const addNewProject =
         useCallback(
             async (values) => {
-                const newProjectData = { ...values, "id": projects.length + 1 };
-                const response = await addProject(newProjectData)
-                if (response.data.status === 'success') {
+                const newProjectData = { ...values};
+                const {response1,response2} = await addProject(newProjectData,auth.data.id)
+                if (response1.data.status === 'success' && response2.data.status === 'success') {
                     setRefetchData(true)
                 }
             },
@@ -79,8 +78,8 @@ const Project = () => {
 
                                     </CardContent>
                                     
-                                <AssignUser
-                                    projectId={item.id} />
+                                    {(item.role_id === 1) && <AssignUser
+                                    projectId={item.id}/>}
                             </Card></div>
                     ))}
                 </div>
