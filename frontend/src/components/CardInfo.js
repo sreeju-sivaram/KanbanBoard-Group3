@@ -27,7 +27,6 @@ function CardInfo(props) {
   const [escalated, setEscalated] = useState(false);
   const [isCommentInput, setIsCommentInput] = useState(false);
   const { auth } = useContext(AuthContext);
-  
   const fetchPriorities = useCallback(
     async () => {
       const response = await getPriorityList()
@@ -46,10 +45,10 @@ function CardInfo(props) {
 
   const fetchUsers = useCallback(
     async () => {
-      const response = await getUsersByProjectId(1)
+      const response = await getUsersByProjectId(auth.data.projectId)
       setUsersList(response);
     },
-    [setUsersList],
+    [setUsersList, auth],
   );
 
   useEffect(
@@ -180,9 +179,10 @@ function CardInfo(props) {
     if (response === 'success') {
       setRefetchData(true);
       setEscalated(true);
+      setShowModal(false);
     }
   },
-  [setRefetchData, cardValues, task, updateCard, setEscalated],
+  [setRefetchData, cardValues, task, updateCard, setEscalated, setShowModal],
   )
 
   const calculatedPercent = calculatePercent();
