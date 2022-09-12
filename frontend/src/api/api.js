@@ -43,19 +43,17 @@ export const addNewStatus = async (params) => {
     return response;
 }
 
-export const getProjectsList = async () => {
-    const response = await axios.get(PROJECTS_URL).then((response) => response.data);
-    return response.data;
-}
-
 export const getPriorityList = async () => {
     const response = await axios.get(PRIORITY_URL).then((response) => response.data);
     return response.data;
 }
 
-export const addProject = async (params) => {
-    const response = await axios.post(PROJECTS_URL, params).then((response) => response);
-    return response;
+export const addProject = async (params,userId) => {
+    const allProjects = await axios.get(PROJECTS_URL).then((response) => response.data);
+    const projId = allProjects.data.length+1;
+    const response1 = await axios.post(PROJECTS_URL, {...params,"id":projId}).then((response) => response);
+    const response2 = await assignUserToProject({ "roleId": 1,"userId":userId,"projectId":projId});
+    return {response1,response2};
 }
 
 export const getRolesList = async () => {
@@ -113,12 +111,24 @@ export const updateComment = async (id, params) => {
     return response;
 }
 
-export const getIsAdminInd = async (id) => {
+export const getProjectsList = async (id) => {
     const response = await axios.get(`${PROJECT_USER_URL}/${id}`).then((response) => response.data);
+    console.log("getting project list?",response.data)
     return response.data;
 }
 
 export const getProjectRole = async (id,pId) =>{
     const response = await axios.get(`${PROJECT_USER_URL}/${id}/${pId}`).then((response) => response.data);
+    console.log(response)
     return response.data;
+}
+
+export const getExistingUsersList = async (id) => {
+    const response = await axios.get(`${PROJECTS_URL}/${id}`).then((response) => response.data);
+    return response.data;
+}
+
+export const deleteUserFrmProject = async (id) => {
+    const response = await axios.delete(`${PROJECT_USER_URL}/${id}`).then((response) => response.data);
+    return response;
 }
